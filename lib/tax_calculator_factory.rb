@@ -2,6 +2,7 @@
 
 require_relative 'tax_calculators/basic_sales_tax_calculator'
 require_relative 'tax_calculators/import_tax_calculator'
+
 class TaxCalculatorFactory
   EXEMPT_FROM_BASIC_SALES_TAX_CATEGORIES = [:book, :food, :medical]
 
