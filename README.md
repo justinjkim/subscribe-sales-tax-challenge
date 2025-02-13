@@ -40,6 +40,11 @@ you pass in pre-determined data beforehand, such as the item's category or impor
 using regex to parse out a string input if that really was the requirement, but for the sake of time, I decided to
 make the luxurious assumption that an array of hashes was acceptable.
 
+## Commit history
+I'm a pretty big believer in writing detailed commit descriptions, as they can provide valuable insight for future
+devs on why code was written in a certain way. Feel free to look at my commit history to get a more detailed look.
+You can also see [this video](https://www.youtube.com/watch?v=8OOTVxKDwe0) that has greatly shaped my view towards writing good commits.
+
 ## General structure of app
 ```
 sales_tax/
