@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'tax_calculator_factory'
+
 class Item
   attr_accessor(
     :name,
@@ -30,7 +32,7 @@ class Item
   end
 
   def total_price
-    (price * quantity) + total_tax
+    ((price * quantity) + total_tax).round(2)
   end
 
   private
