@@ -1,80 +1,22 @@
-### Thought process
-Took about an hour just to understand the mechanism of how the sales and import duty tax calculations worked
+# Intro
+My name is Justin Kim, and I'm currently a Lead Software Engineer at Maverick Solutions. This is my attempt at solving
+the Subscribe code challenge within the 4-hour time limit.
 
-took awhile to realize that you can add the tax percentages together (because we're ok with just the total tax amount, not the itemized ones)
-
-### Assumptions
-didn't realize that the sales tax subtotal at the end of each receipt actually includes both the basic sales and import duty tax.
-
-### Input 1
-```ruby
-input = 
-  {
-    name: 'book',
-    quantity: 2,
-    price: 12.49,
-    category: :book,
-    imported: false
-  },
-  {
-    name: 'music CD',
-    quantity: 1,
-    price: 14.99,
-    category: :other,
-    imported: false
-  },
-  {
-    name: 'chocolate bar',
-    quantity: 1,
-    price: 0.85,
-    category: :food,
-    imported: false
-  }  
-
+## Resources used
+To be upfront, I definitely had to utilize the help of Claude.AI to understand some of the tax calculation logic (especially the part
+about rounding to the 0.05 cents! I'm not a math guy.) For example, I had assumed that the import and sales taxes
+were calculated separately first before combining them and was frustrated in why I couldn't get the numbers to add up
+(no pun intended), but with the help of Claude, I realized that the tax percentages were added first, and _then_ it was
+calculated against the base price:
 ```
-
-```
-# Output
-2 book: 24.98 # because no taxes
-1 music CD: 16.49 # because 14.99*1.1 rounds to 16.49
-1 chocolate bar: 0.85 # because no sales or imported tax because it's food
-Sales Taxes: 1.50 # because the only sales tax was from the music CD
-Total: 42:32 # remember, the sales tax is already included in here
-```
-
-### Input 2
-```ruby
-input = 
-  {
-    name: 'imported box of chocolates',
-    quantity: 1,
-    price: 10.00,
-    category: :food,
-    imported: true
-  },
-  {
-    name: 'imported bottle of perfume',
-    quantity: 1,
-    price: 47.50,
-    category: :other,
-    imported: true
-  }
-```
-```
-# Output
-1 imported box of chocolates: 10.50 # no sales tax, but has imported tax
-1 imported bottle of perfume: 54.65 # total is 54.625, but rounds up 
-
-4.8 + 2.375 + 47.50
-
 Imported box of chocolates at 10.00:
 
-Food = exempt from 10% basic tax
+Sales tax = exempt from 10% basic tax, because it's a food category
 Import tax = 5%
 Tax calculation: (10.00 × 5/100) = 0.50
 0.50 already ends in .05, so no rounding needed
 Final price: 10.00 + 0.50 = 10.50
-
+---
 Imported perfume at 47.50:
 
 Gets both basic (10%) and import (5%) = 15% total
@@ -85,3 +27,47 @@ Final price: 47.50 + 7.15 = 54.65
 Total taxes = 0.50 + 7.15 = 7.65
 Total = 10.50 + 54.65 = 65.15
 ```
+After reading the requirements multiple times and understanding
+the general flow, I did my best to not use Claude.AI as much. Although the requirements didn't mention that I couldn't
+use an AI assistant, I wanted to make sure that I tried to think out my strategy beforehand without too much input
+from an external resource. I did initially think of using some object-oriented principles here, and Claude helped me
+to tidy up some of the code, or to at least get the general boilerplate setup. 
+
+## Assumptions made
+While I thought about using string inputs as demonstrated in the challenge, I eventually settled to just assuming that
+I could pass in an array of hashes that represented an object. However, I also realize that my app would only work if
+you pass in pre-determined data beforehand, such as the item's category or import status. In the future, I could try
+using regex to parse out a string input if that really was the requirement, but for the sake of time, I decided to
+make the luxurious assumption that an array of hashes was acceptable.
+
+## General structure of app
+```
+sales_tax/
+├── lib/
+│   ├── item.rb
+│   ├── tax_calculators/
+│   │   ├── basic_sales_tax_calculator.rb
+│   │   └── import_tax_calculator.rb
+│   ├── tax_calculator_factory.rb
+│   └── receipt.rb
+├── spec/
+│   ├── item_spec.rb
+│   ├── tax_calculators/
+│   │   ├── basic_sales_tax_calculator_spec.rb
+│   │   └── import_tax_calculator_spec.rb
+│   ├── tax_calculator_factory_spec.rb
+│   └── receipt_spec.rb
+└── README.md
+```
+**Note: I did not get to finish writing specs for the tax calculators themselves, but they probably would've been
+very simple tests, just verifying that the tax rates were correct.**
+
+
+# Setup
+This is a very basic Ruby app that doesn't incorporate any framework such as Rails. It does include RSpec for testing
+purposes, but that's about it. 
+
+Since I wanted to honor the 4-hour time window, I did not get to write a very simple script that the user could run to
+enter their own inputs into the app, but I have at least specs that pass and seem to match the challenge's requirements.
+To run the specs, you can simply run `rspec` in the root folder of this app. You can also look at the specs themselves
+to ensure that I am testing things adequately. They are located in the `spec` folder.
